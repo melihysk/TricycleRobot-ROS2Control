@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!--xacro:include filename="gebot_core.xacro" /-->
+
+    <link name="chassis1">
+        <visual>
+            <geometry>
+                <box size="0.9 0.9 0.55"/>
+            </geometry>
+            <material name="myblue"/>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="0.9 0.9 0.55"/>
+            </geometry>
+        </collision>
+        <xacro:box_inertia m="1" w="0.9" d="0.9" h="0.55"/><!--10-->
+    </link>
+
+    <link name="control_box">
+        <visual>
+            <geometry>
+                <box size="0.2 0.4 0.35"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="0.2 0.4 0.35"/>
+            </geometry>
+        </collision>
+        <xacro:box_inertia m="1" w="0.2" d="0.4" h="0.35"/>
+    </link>
+
+    <link name="seat">
+        <visual>
+            <geometry>
+                <box size="0.4 0.38 0.1"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="0.4 0.38 0.075"/>
+            </geometry>
+        </collision>
+        <xacro:box_inertia m="1" w="0.4" d="0.38" h="0.075"/>
+    </link>
+
+    <link name="seatback">
+        <visual>
+            <geometry>
+                <box size="0.1 0.38 0.45"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="0.1 0.38 0.45"/>
+            </geometry>
+        </collision>
+        <xacro:box_inertia m="1" w="0.1" d="0.38" h="0.45"/>
+    </link>
+
+    <link name="chassis2">
+        <visual>
+            <geometry>
+                <box size="0.075 0.4 0.6"/>
+            </geometry>
+            <material name="myblue"/>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="0.075 0.4 0.6"/>
+            </geometry>
+        </collision>
+        <xacro:box_inertia m="1" w="0.075" d="0.4" h="0.6"/><!--10-->
+    </link>
+
+    <joint name="base_to_chassis1" type="fixed">
+        <parent link="base_chassis"/>
+        <child link="chassis1"/>
+        <origin xyz="-0.225 0.0 0.3"/>
+    </joint>
+    
+    <joint name="chassis1_to_control_box" type="fixed">
+        <!--axis xyz="0 1 0"/-->
+        <!--limit effort="1000.0" lower="-0.4" upper="0.4" velocity="0.5"/-->
+        <parent link="chassis1"/>
+        <child link="control_box"/>
+        <origin xyz="-0.05 0.0 0.45"/>
+    </joint>
+
+    <joint name="base_to_seat" type="fixed">
+        <parent link="chassis1"/>
+        <child link="seat"/>
+        <origin xyz="0.25 0.0 0.275"/>
+    </joint>
+
+    <joint name="seat_to_seatback" type="fixed">
+        <parent link="seat"/>
+        <child link="seatback"/>
+        <origin xyz="-0.15 0.0 0.0"/>
+    </joint>
+
+    <joint name="base_to_chassis2" type="fixed">
+        <parent link="base_chassis"/>
+        <child link="chassis2"/>
+        <origin xyz="0.6385 0.0 0.325"/>
+    </joint>
+    
+</robot>

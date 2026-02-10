@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="gebot">
+
+    <!-- Base Chassis -->
+    <gazebo reference="base_chassis">
+        <visual>
+            <material>
+                <ambient>1.0 1.0 1.0 1</ambient>
+                <diffuse>1.0 1.0 1.0 1</diffuse>
+            </material>
+        </visual>
+    </gazebo>
+
+    <!-- Wheels -->
+    <gazebo reference="right_wheel">
+        <visual>
+            <material>
+                <ambient>0.3 0.3 0.3 1</ambient>
+                <diffuse>0.3 0.3 0.3 1</diffuse>
+            </material>
+        </visual>
+    </gazebo>
+
+    <gazebo reference="left_wheel">
+        <visual>
+            <material>
+                <ambient>0.3 0.3 0.3 1</ambient>
+                <diffuse>0.3 0.3 0.3 1</diffuse>
+            </material>
+        </visual>
+    </gazebo>
+
+    <gazebo reference="front_wheel">
+        <visual>
+            <material>
+                <ambient>0.3 0.3 0.3 1</ambient>
+                <diffuse>0.3 0.3 0.3 1</diffuse>
+            </material>
+        </visual>
+    </gazebo>
+
+    <!-- Steering -->
+    <gazebo reference="steering_link">
+        <visual>
+            <material>
+                <ambient>1.0 1.0 1.0 1</ambient>
+                <diffuse>1.0 1.0 1.0 1</diffuse>
+            </material>
+        </visual>
+    </gazebo>
+
+    <gazebo reference="bearing">
+        <visual>
+            <material>
+                <ambient>0.1 0.1 0.1 1</ambient>
+                <diffuse>0.1 0.1 0.1 1</diffuse>
+            </material>
+        </visual>
+    </gazebo>
+
+    <gazebo reference="bearing_gear">
+        <visual>
+            <material>
+                <ambient>0.9 0.9 0.0 1</ambient>
+                <diffuse>0.9 0.9 0.0 1</diffuse>
+            </material>
+        </visual>
+    </gazebo>
+
+    <gazebo reference="steering_wheel">
+        <visual>
+            <material>
+                <ambient>0.1 0.1 0.1 1</ambient>
+                <diffuse>0.1 0.1 0.1 1</diffuse>
+            </material>
+        </visual>
+    </gazebo>
+
+    <!-- Body -->
+    <gazebo reference="chassis1">
+        <visual>
+            <material>
+                <ambient>0.3 0.6 0.9 1</ambient>
+                <diffuse>0.3 0.6 0.9 1</diffuse>
+            </material>
+        </visual>
+    </gazebo>
+
+    <gazebo reference="chassis2">
+        <visual>
+            <material>
+                <ambient>0.3 0.6 0.9 1</ambient>
+                <diffuse>0.3 0.6 0.9 1</diffuse>
+            </material>
+        </visual>
+    </gazebo>
+
+    <gazebo reference="control_box">
+        <visual>
+            <material>
+                <ambient>1.0 1.0 1.0 1</ambient>
+                <diffuse>1.0 1.0 1.0 1</diffuse>
+            </material>
+        </visual>
+    </gazebo>
+
+    <gazebo reference="seat">
+        <visual>
+            <material>
+                <ambient>0.3 0.3 0.3 1</ambient>
+                <diffuse>0.3 0.3 0.3 1</diffuse>
+            </material>
+        </visual>
+    </gazebo>
+
+    <gazebo reference="seatback">
+        <visual>
+            <material>
+                <ambient>0.3 0.3 0.3 1</ambient>
+                <diffuse>0.3 0.3 0.3 1</diffuse>
+            </material>
+        </visual>
+    </gazebo>
+
+</robot>
