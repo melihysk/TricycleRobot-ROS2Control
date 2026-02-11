@@ -16,8 +16,9 @@
   <depend>ros_gz_bridge</depend>
   <depend>gz_ros2_control</depend>
   <depend>controller_manager</depend>
-  <depend>tricycle_controller</depend>
+  <depend>offset_tricycle_controller</depend>
   <depend>joint_state_broadcaster</depend>
+  <depend>joy</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

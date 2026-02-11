@@ -13,6 +13,11 @@ endif()
 find_package(ament_cmake REQUIRED)
 
 install(
+  PROGRAMS scripts/joystick_teleop.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(
   DIRECTORY launch gazebo_sim_model config
   DESTINATION share/${PROJECT_NAME}
 )

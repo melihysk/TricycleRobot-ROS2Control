@@ -10,6 +10,51 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 
+def _box_sdf(r: float, g: float, b: float) -> str:
+    return f"""
+<sdf version='1.9'>
+  <model name='box_marker'>
+    <static>true</static>
+    <link name='link'>
+      <visual name='visual'>
+        <geometry>
+          <box>
+            <size>0.35 0.35 0.35</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>{r} {g} {b} 1</ambient>
+          <diffuse>{r} {g} {b} 1</diffuse>
+        </material>
+      </visual>
+      <collision name='collision'>
+        <geometry>
+          <box>
+            <size>0.35 0.35 0.35</size>
+          </box>
+        </geometry>
+      </collision>
+    </link>
+  </model>
+</sdf>
+"""
+
+
+def _spawn_box(name: str, x: float, y: float, r: float, g: float, b: float) -> Node:
+    return Node(
+        package='ros_gz_sim',
+        executable='create',
+        arguments=[
+            '-name', name,
+            '-string', _box_sdf(r, g, b),
+            '-x', str(x),
+            '-y', str(y),
+            '-z', '0.175',
+        ],
+        output='screen',
+    )
+
+
 def generate_launch_description():
     pkg_path = get_package_share_directory('tricycle_robot')
     rviz_config_path = os.path.join(pkg_path, 'config', 'gz_sim.rviz')
@@ -49,6 +94,17 @@ def generate_launch_description():
         output='screen',
     )
 
+    # Static colored reference boxes for odometry checks
+    spawn_x_plus = _spawn_box('marker_x_plus_7', 7.0, 0.0, 1.0, 0.0, 0.0)     # red
+    spawn_x_minus = _spawn_box('marker_x_minus_7', -7.0, 0.0, 0.0, 1.0, 0.0)  # green
+    spawn_y_plus = _spawn_box('marker_y_plus_7', 0.0, 7.0, 0.0, 0.0, 1.0)     # blue
+    spawn_y_minus = _spawn_box('marker_y_minus_7', 0.0, -7.0, 1.0, 1.0, 0.0)  # yellow
+
+    delayed_box_spawners = TimerAction(
+        period=2.0,
+        actions=[spawn_x_plus, spawn_x_minus, spawn_y_plus, spawn_y_minus],
+    )
+
     # ROS-Gazebo bridge for clock
     bridge = Node(
         package='ros_gz_bridge',
@@ -69,7 +125,7 @@ def generate_launch_description():
     tricycle_controller_spawner = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['tricycle_controller'],
+        arguments=['offset_tricycle_controller'],
         output='screen',
     )
 
@@ -102,6 +158,7 @@ def generate_launch_description():
         node_robot_state_publisher,
         gazebo_sim,
         spawn_entity,
+        delayed_box_spawners,
         bridge,
         delayed_controller_spawner,
         rviz2_node,

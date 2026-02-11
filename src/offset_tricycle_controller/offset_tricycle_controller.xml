@@ -1,0 +1,7 @@
+<library path="offset_tricycle_controller">
+  <class name="offset_tricycle_controller/OffsetTricycleController" type="offset_tricycle_controller::OffsetTricycleController" base_class_type="controller_interface::ControllerInterface">
+  <description>
+    The tricycle controller transforms linear and angular velocity messages into signals for steering and traction joints for a tricycle drive robot.
+  </description>
+  </class>
+</library>
