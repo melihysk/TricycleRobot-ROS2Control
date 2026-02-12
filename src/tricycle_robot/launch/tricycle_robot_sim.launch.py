@@ -105,11 +105,14 @@ def generate_launch_description():
         actions=[spawn_x_plus, spawn_x_minus, spawn_y_plus, spawn_y_minus],
     )
 
-    # ROS-Gazebo bridge for clock
+    # ROS-Gazebo bridge for clock and IMU
     bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+        arguments=[
+            '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
+            '/imu/data@sensor_msgs/msg/Imu[gz.msgs.IMU',
+        ],
         output='screen',
     )
 
@@ -133,6 +136,23 @@ def generate_launch_description():
     delayed_controller_spawner = TimerAction(
         period=5.0,
         actions=[joint_state_broadcaster_spawner, tricycle_controller_spawner],
+    )
+
+    # EKF node for sensor fusion (wheel odometry + IMU)
+    ekf_config_path = os.path.join(pkg_path, 'config', 'ekf.yaml')
+    ekf_node = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        name='ekf_filter_node',
+        output='screen',
+        parameters=[ekf_config_path, {'use_sim_time': use_sim_time}],
+        remappings=[('odometry/filtered', '/odometry/filtered')],
+    )
+
+    # Delay EKF start to ensure controller and IMU are ready
+    delayed_ekf = TimerAction(
+        period=7.0,
+        actions=[ekf_node],
     )
 
     # RViz2
@@ -161,5 +181,6 @@ def generate_launch_description():
         delayed_box_spawners,
         bridge,
         delayed_controller_spawner,
+        delayed_ekf,
         rviz2_node,
     ])

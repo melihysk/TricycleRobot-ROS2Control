@@ -19,6 +19,8 @@
   <depend>offset_tricycle_controller</depend>
   <depend>joint_state_broadcaster</depend>
   <depend>joy</depend>
+  <depend>robot_localization</depend>
+  <depend>sensor_msgs</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

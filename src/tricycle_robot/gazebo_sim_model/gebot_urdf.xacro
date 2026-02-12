@@ -268,6 +268,43 @@
         <kd>1.0</kd>
     </gazebo>
 
+    <!-- IMU Sensor -->
+    <link name="imu_link">
+        <visual>
+            <geometry>
+                <box size="0.04 0.04 0.02"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="0.04 0.04 0.02"/>
+            </geometry>
+        </collision>
+        <xacro:box_inertia m="0.01" w="0.04" d="0.04" h="0.02"/>
+    </link>
+
+    <joint name="imu_joint" type="fixed">
+        <parent link="base_chassis"/>
+        <child link="imu_link"/>
+        <origin xyz="0.0 0.0 0.035" rpy="0 0 0"/>
+    </joint>
+
+    <gazebo reference="imu_link">
+        <sensor name="imu_sensor" type="imu">
+            <always_on>true</always_on>
+            <update_rate>50</update_rate>
+            <visualize>false</visualize>
+            <topic>/imu/data</topic>
+            <gz_frame_id>imu_link</gz_frame_id>
+        </sensor>
+    </gazebo>
+
+    <!-- Gazebo IMU system plugin (required for gz-sim) -->
+    <gazebo>
+        <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"/>
+    </gazebo>
+
     <!-- Include Gazebo Tricycle Control -->
     <xacro:include filename="$(find tricycle_robot)/gazebo_sim_model/gz_tricycle_control.xacro" />
     

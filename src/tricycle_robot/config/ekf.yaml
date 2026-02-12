@@ -1,0 +1,80 @@
+### EKF configuration for fusing wheel odometry + IMU ###
+# This node subscribes to:
+#   /offset_tricycle_controller/odom  (wheel odometry)
+#   /imu/data                         (IMU)
+# and publishes:
+#   /odometry/filtered                (fused odometry)
+#   /tf  (odom -> base_link)
+
+ekf_filter_node:
+  ros__parameters:
+    use_sim_time: true
+
+    # Output frame configuration
+    odom_frame: odom
+    base_link_frame: base_link
+    world_frame: odom      # Use 'odom' for local odometry fusion
+    map_frame: map
+
+    # Publish the odom->base_link TF from EKF (not from the controller)
+    publish_tf: true
+
+    # Update rate matches the controller rate
+    frequency: 50.0
+
+    # ── Wheel Odometry ────────────────────────────────────────────────
+    odom0: /offset_tricycle_controller/odom
+
+    # [x,   y,   z,
+    #  roll, pitch, yaw,
+    #  vx,  vy,  vz,
+    #  vroll, vpitch, vyaw,
+    #  ax,  ay,  az]
+    #
+    # From wheel odom we fuse only velocities (vx, vyaw).
+    # Positions are derived by the EKF's internal integration of velocities,
+    # which benefits from the IMU-corrected heading.
+    # This avoids directly trusting the odom's accumulated position error.
+    odom0_config: [false, false, false,
+                   false, false, false,
+                   true,  false, false,
+                   false, false, true,
+                   false, false, false]
+
+    odom0_differential: false
+    odom0_relative: false
+    odom0_queue_size: 10
+
+    # ── IMU ───────────────────────────────────────────────────────────
+    imu0: /imu/data
+
+    # From IMU we trust: yaw orientation and vyaw angular velocity.
+    # This corrects the heading drift that wheel odometry alone suffers from.
+    imu0_config: [false, false, false,
+                  false, false, true,
+                  false, false, false,
+                  false, false, true,
+                  false, false, false]
+
+    imu0_differential: false
+    imu0_relative: false
+    imu0_queue_size: 10
+    imu0_remove_gravitational_acceleration: true
+
+    # Process noise covariance (diagonal)
+    # Tune these based on your robot's behavior
+    process_noise_covariance: [0.05,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+                               0.0,   0.05,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+                               0.0,   0.0,   0.06,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+                               0.0,   0.0,   0.0,   0.03,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+                               0.0,   0.0,   0.0,   0.0,   0.03,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+                               0.0,   0.0,   0.0,   0.0,   0.0,   0.06,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.025, 0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.025, 0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.04,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.01,  0.0,   0.0,   0.0,   0.0,   0.0,
+                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.01,  0.0,   0.0,   0.0,   0.0,
+                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.02,  0.0,   0.0,   0.0,
+                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.01,  0.0,   0.0,
+                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.01,  0.0,
+                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.015]

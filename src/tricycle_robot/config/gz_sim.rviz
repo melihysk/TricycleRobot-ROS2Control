@@ -143,6 +143,84 @@ Visualization Manager:
       Update Interval: 0
       Value: true
       Visual Enabled: true
+    - Class: rviz_default_plugins/Odometry
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: LOCAL
+          Offset: 1
+          Scale: 1
+          Value: false
+        Position:
+          Alpha: 0.30000001192092896
+          Color: 204; 51; 204
+          Scale: 1
+          Value: false
+        Value: true
+      Enabled: true
+      Keep: 50
+      Name: EKF Odometry
+      Position Tolerance: 0.10000000149011612
+      Angle Tolerance: 0.10000000149011612
+      Shape:
+        Alpha: 1
+        Axes Length: 0.5
+        Axes Radius: 0.05000000074505806
+        Color: 0; 255; 0
+        Head Length: 0.10000000149011612
+        Head Radius: 0.05000000074505806
+        Shaft Length: 0.30000001192092896
+        Shaft Radius: 0.02500000037252903
+        Value: Arrow
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /odometry/filtered
+      Value: true
+    - Class: rviz_default_plugins/Odometry
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: LOCAL
+          Offset: 1
+          Scale: 1
+          Value: false
+        Position:
+          Alpha: 0.30000001192092896
+          Color: 204; 51; 204
+          Scale: 1
+          Value: false
+        Value: false
+      Enabled: true
+      Keep: 50
+      Name: Wheel Odometry
+      Position Tolerance: 0.10000000149011612
+      Angle Tolerance: 0.10000000149011612
+      Shape:
+        Alpha: 1
+        Axes Length: 0.5
+        Axes Radius: 0.05000000074505806
+        Color: 255; 0; 0
+        Head Length: 0.10000000149011612
+        Head Radius: 0.05000000074505806
+        Shaft Length: 0.30000001192092896
+        Shaft Radius: 0.02500000037252903
+        Value: Arrow
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /offset_tricycle_controller/odom
+      Value: true
     - Class: rviz_default_plugins/TF
       Enabled: true
       Filter (blacklist): ""
@@ -165,6 +243,8 @@ Visualization Manager:
         control_box:
           Value: true
         front_wheel:
+          Value: true
+        imu_link:
           Value: true
         left_wheel:
           Value: true
