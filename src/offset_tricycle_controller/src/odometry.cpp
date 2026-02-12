@@ -37,32 +37,40 @@ Odometry::Odometry(size_t velocity_rolling_window_size)
 
 bool Odometry::update(double Ws, double alpha, const rclcpp::Duration & dt)
 {
-  // Offset tricycle kinematics with lateral_offset (A)
-  // Wheel linear velocity
-  double Vs = Ws * wheel_radius_;
-  
-  // Robot center linear velocity
-  double Vx = Vs * std::cos(alpha);
-  
-  // Angular velocity with lateral offset consideration
-  // For offset tricycle: R = L/tan(alpha) - A
-  // theta_dot = Vx / R
-  double theta_dot = 0.0;
-  
-  if (std::fabs(alpha) > 1e-6)
-  {
-    double tan_alpha = std::tan(alpha);
-    if (std::fabs(tan_alpha) > 1e-6)
-    {
-      double R = (wheelbase_ / tan_alpha) - lateral_offset_;
-      if (std::fabs(R) > 1e-6)
-      {
-        theta_dot = Vx / R;
-      }
-    }
-  }
+  // Offset tricycle kinematics
+  //
+  // Notation: psi = alpha (steering angle), L = wheelbase, A = lateral_offset, r = wheel_radius
+  //
+  // In the URDF, the steering wheel is offset to the RIGHT by A meters
+  // (bearing_joint y = -A). From no-slip constraint derivation:
+  //
+  //   ICR at (0, -d) on the rear axle line, wheel at (L, -A):
+  //   No-slip => L*cos(psi) + (d - A)*(-sin(psi)) = 0
+  //           => d = L/tan(psi) + A    (turning radius, signed)
+  //
+  //   Eq(1):  Vs = Ws * r;   omega = Vs * sin(psi) / L
+  //   Eq(2):  Vx = Vs * (cos(psi) + A * sin(psi) / L)
+  //           R  = Vx / omega = L/tan(psi) + A
+  //
+  // Note the "+A" (not "-A") because A is defined as rightward offset in the URDF.
 
-  // Integrate odometry:
+  const double L = wheelbase_;
+  const double A = lateral_offset_;
+  const double r = wheel_radius_;
+
+  // Wheel linear (circumferential) speed
+  double Vs = Ws * r;
+
+  double sin_psi = std::sin(alpha);
+  double cos_psi = std::cos(alpha);
+
+  // Eq(1): angular velocity of the robot
+  double theta_dot = Vs * sin_psi / L;
+
+  // Eq(2): robot-center forward velocity (with +A for rightward offset)
+  double Vx = Vs * (cos_psi + A * sin_psi / L);
+
+  // Integrate odometry: R = Vx/theta_dot = L/tan(psi) + A
   integrateExact(Vx * dt.seconds(), theta_dot * dt.seconds());
 
   // Estimate speeds using a rolling mean to filter them out:

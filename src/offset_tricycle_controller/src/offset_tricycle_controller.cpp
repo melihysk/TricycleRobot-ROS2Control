@@ -604,14 +604,14 @@ std::tuple<double, double> OffsetTricycleController::twist_to_ackermann(double V
       alpha = std::min(alpha, alpha_safe_max);
     }
 
+    // From Eq(1): omega = Vs * sin(psi) / L  =>  Ws = omega * L / (r * sin(psi))
     const double sin_alpha = std::sin(alpha);
-    const double k = L * std::cos(alpha) - A * std::sin(alpha);
-    if (std::abs(sin_alpha) < kEps || k <= kEps)
+    if (std::abs(sin_alpha) < kEps)
     {
       return std::make_tuple(alpha, 0.0);
     }
 
-    Ws = theta_dot * k / (r * sin_alpha);
+    Ws = theta_dot * L / (r * sin_alpha);
     return std::make_tuple(alpha, Ws);
   }
 
@@ -624,37 +624,38 @@ std::tuple<double, double> OffsetTricycleController::twist_to_ackermann(double V
   }
 
   // Curved motion
-  // R = Vx / theta_dot (turning radius from robot center)
-  double R = Vx / theta_dot;
+  // From no-slip derivation (A = rightward offset in URDF):
+  //   Eq(2): Vx = Vs * (cos(psi) + A*sin(psi)/L)
+  //   Eq(1): omega = Vs * sin(psi) / L
+  //   Eliminating Vs:  Vx/omega = L*cos(psi)/sin(psi) + A = L/tan(psi) + A
+  //   So: tan(psi) = L / (Vx/omega - A)
   
-  // For offset tricycle: tan(alpha) = L / (R + A)
-  double R_plus_A = R + A;
+  double R_eff = Vx / theta_dot;  // = L/tan(psi) + A
+  double R_minus_A = R_eff - A;   // = L/tan(psi)
   
-  if (std::abs(R_plus_A) < 0.01)
+  if (std::abs(R_minus_A) < 0.01)
   {
     // Very tight turn
-    alpha = (R_plus_A >= 0) ? M_PI_2 : -M_PI_2;
-    R_plus_A = (R_plus_A >= 0) ? 0.01 : -0.01;
+    alpha = (R_minus_A >= 0) ? M_PI_2 : -M_PI_2;
   }
   else
   {
-    alpha = std::atan(L / R_plus_A);
+    alpha = std::atan(L / R_minus_A);
   }
   
-  // Wheel velocity
-  // The wheel is at distance sqrt(L^2 + (R+A)^2) from ICR
-  double R_wheel = std::sqrt(L * L + R_plus_A * R_plus_A);
-  double V_wheel = theta_dot * R_wheel;
+  // Wheel angular velocity from Eq(1): omega = Vs * sin(psi) / L
+  // => Vs = omega * L / sin(psi)
+  // => Ws = Vs / r = omega * L / (r * sin(psi))
+  double sin_alpha = std::sin(alpha);
   
-  // Convert to angular velocity
-  double cos_alpha = std::cos(alpha);
-  if (std::abs(cos_alpha) > 1e-6)
+  if (std::abs(sin_alpha) > kEps)
   {
-    Ws = V_wheel / (r * cos_alpha);
+    Ws = theta_dot * L / (r * sin_alpha);
   }
   else
   {
-    Ws = V_wheel / r;
+    // Near-straight: alpha ≈ 0, Vx ≈ Vs, so Ws = Vx / r
+    Ws = Vx / r;
   }
   
   return std::make_tuple(alpha, Ws);
