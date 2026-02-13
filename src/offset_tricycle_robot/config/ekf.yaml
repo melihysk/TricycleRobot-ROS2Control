@@ -1,6 +1,6 @@
 ### EKF configuration for fusing wheel odometry + IMU ###
 # This node subscribes to:
-#   /tricycle_controller/odom  (wheel odometry)
+#   /offset_tricycle_controller/odom  (wheel odometry)
 #   /imu/data                         (IMU)
 # and publishes:
 #   /odometry/filtered                (fused odometry)
@@ -23,7 +23,7 @@ ekf_filter_node:
     frequency: 50.0
 
     # ── Wheel Odometry ────────────────────────────────────────────────
-    odom0: /tricycle_controller/odom
+    odom0: /offset_tricycle_controller/odom
 
     # [x,   y,   z,
     #  roll, pitch, yaw,

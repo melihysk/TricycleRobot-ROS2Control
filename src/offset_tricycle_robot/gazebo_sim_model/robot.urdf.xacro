@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="gebot">
+
+    <!-- Robot Core -->
+    <xacro:include filename="gebot_urdf.xacro" />
+    <xacro:include filename="body.xacro" />
+    <xacro:include filename="gazebo_sim_material.xacro" />
+
+</robot>

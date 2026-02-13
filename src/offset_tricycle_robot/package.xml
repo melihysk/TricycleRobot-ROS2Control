@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>tricycle_robot</name>
+  <name>offset_tricycle_robot</name>
   <version>0.0.1</version>
   <description>Gazebo Sim (gz-sim) robot model and launch files for tricycle robot</description>
   <maintainer email="melih@todo.com">Melih</maintainer>
@@ -16,7 +16,7 @@
   <depend>ros_gz_bridge</depend>
   <depend>gz_ros2_control</depend>
   <depend>controller_manager</depend>
-  <depend>tricycle_controller</depend>
+  <depend>offset_tricycle_controller</depend>
   <depend>joint_state_broadcaster</depend>
   <depend>joy</depend>
   <depend>robot_localization</depend>

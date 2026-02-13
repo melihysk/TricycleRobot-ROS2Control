@@ -56,12 +56,12 @@ def _spawn_box(name: str, x: float, y: float, r: float, g: float, b: float) -> N
 
 
 def generate_launch_description():
-    pkg_path = get_package_share_directory('tricycle_robot')
+    pkg_path = get_package_share_directory('offset_tricycle_robot')
     rviz_config_path = os.path.join(pkg_path, 'config', 'gz_sim.rviz')
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
-    # Robot description (xacro) - gz_rsp mantığı burada
+    # Robot description (xacro)
     xacro_file = os.path.join(pkg_path, 'gazebo_sim_model', 'robot.urdf.xacro')
     robot_description_config = xacro.process_file(xacro_file)
     robot_description = {'robot_description': robot_description_config.toxml(), 'use_sim_time': use_sim_time}
@@ -126,17 +126,17 @@ def generate_launch_description():
     )
 
     # Tricycle Controller - cmd_vel ile kontrol için
-    tricycle_controller_spawner = Node(
+    offset_tricycle_controller_spawner = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['tricycle_controller'],
+        arguments=['offset_tricycle_controller'],
         output='screen',
     )
 
     # Controller'ları spawn sonrası başlat (delay ile)
     delayed_controller_spawner = TimerAction(
         period=5.0,
-        actions=[joint_state_broadcaster_spawner, tricycle_controller_spawner],
+        actions=[joint_state_broadcaster_spawner, offset_tricycle_controller_spawner],
     )
 
     # EKF node for sensor fusion (wheel odometry + IMU)

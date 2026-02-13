@@ -41,7 +41,7 @@ class JoystickTeleop(Node):
         self.steering_axis = self.get_parameter('steering_axis').value
         
         # Publisher - TwistStamped!
-        self.cmd_vel_pub = self.create_publisher(TwistStamped, '/tricycle_controller/cmd_vel', 10)
+        self.cmd_vel_pub = self.create_publisher(TwistStamped, '/offset_tricycle_controller/cmd_vel', 10)
         
         # Subscriber
         self.joy_sub = self.create_subscription(Joy, '/joy', self.joy_callback, 10)

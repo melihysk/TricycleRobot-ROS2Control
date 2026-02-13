@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <robot name="gebot" xmlns:xacro="http://www.ros.org/wiki/xacro">
     <!-- Read controller lateral_offset directly from YAML so model and controller stay in sync -->
-    <!-- <xacro:property name="controller_config" value="${xacro.load_yaml('$(find tricycle_robot)/config/tricycle_controller.yaml')}"/> -->
-    <!-- <xacro:property name="lateral_offset" value="${controller_config['offset_tricycle_controller']['ros__parameters']['lateral_offset']}"/> -->
+    <xacro:property name="controller_config" value="${xacro.load_yaml('$(find offset_tricycle_robot)/config/offset_tricycle_controller.yaml')}"/>
+    <xacro:property name="lateral_offset" value="${controller_config['offset_tricycle_controller']['ros__parameters']['lateral_offset']}"/>
     
     <xacro:property name="base_width" value="0.9"/>
     <xacro:property name="base_length" value="1.35"/>
@@ -209,7 +209,7 @@
         <parent link="base_chassis"/>
         <child link="bearing"/>
         <!-- ROS frame: +Y is left. We map +lateral_offset to right by using negative Y. -->
-        <!-- <origin xyz="0.475 ${0.0 - lateral_offset} 0.045"/> -->
+        <origin xyz="0.475 ${0.0 - lateral_offset} 0.045"/>
         <origin xyz="0.475 0.0 0.045"/>
     </joint>
 
@@ -318,6 +318,6 @@
     </gazebo>
 
     <!-- Include Gazebo Tricycle Control -->
-    <xacro:include filename="$(find tricycle_robot)/gazebo_sim_model/gz_tricycle_control.xacro" />
+    <xacro:include filename="$(find offset_tricycle_robot)/gazebo_sim_model/gz_tricycle_control.xacro" />
     
 </robot>
