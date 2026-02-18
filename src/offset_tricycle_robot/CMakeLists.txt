@@ -18,7 +18,7 @@ install(
 )
 
 install(
-  DIRECTORY launch gazebo_sim_model config
+  DIRECTORY launch urdf config
   DESTINATION share/${PROJECT_NAME}
 )
 

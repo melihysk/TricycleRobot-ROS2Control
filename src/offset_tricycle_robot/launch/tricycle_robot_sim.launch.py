@@ -62,7 +62,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
     # Robot description (xacro)
-    xacro_file = os.path.join(pkg_path, 'gazebo_sim_model', 'robot.urdf.xacro')
+    xacro_file = os.path.join(pkg_path, 'urdf', 'forklift.urdf.xacro')
     robot_description_config = xacro.process_file(xacro_file)
     robot_description = {'robot_description': robot_description_config.toxml(), 'use_sim_time': use_sim_time}
 

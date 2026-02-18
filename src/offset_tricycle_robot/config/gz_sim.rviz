@@ -85,22 +85,17 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        chassis1:
+        front_left_wheel:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        chassis2:
+        front_panel:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        control_box:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        front_wheel:
+        front_right_drive_wheel:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -110,22 +105,12 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        left_wheel:
+        rear_left_wheel:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        right_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        seat:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        seatback:
+        rear_right_wheel:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -280,25 +265,19 @@ Visualization Manager:
           Value: true
         bearing_gear:
           Value: true
-        chassis1:
+        front_left_wheel:
           Value: true
-        chassis2:
+        front_panel:
           Value: true
-        control_box:
-          Value: true
-        front_wheel:
+        front_right_drive_wheel:
           Value: true
         imu_link:
           Value: true
-        left_wheel:
-          Value: true
         odom:
           Value: true
-        right_wheel:
+        rear_left_wheel:
           Value: true
-        seat:
-          Value: true
-        seatback:
+        rear_right_wheel:
           Value: true
         steering_link:
           Value: true
@@ -315,21 +294,17 @@ Visualization Manager:
             base_chassis:
               bearing:
                 bearing_gear:
-                  front_wheel:
+                  front_right_drive_wheel:
                     {}
-              chassis1:
-                control_box:
-                  {}
-                seat:
-                  seatback:
-                    {}
-              chassis2:
+              front_left_wheel:
+                {}
+              front_panel:
                 {}
               imu_link:
                 {}
-              left_wheel:
+              rear_left_wheel:
                 {}
-              right_wheel:
+              rear_right_wheel:
                 {}
               steering_link:
                 steering_wheel:
