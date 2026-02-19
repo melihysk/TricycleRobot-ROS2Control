@@ -98,7 +98,7 @@
       </geometry>
       <material name="base"/>
     </visual>
-    <xacro:box_inertia m="1" w="${base_width}" d="${base_length}" h="${base_height}"/>
+    <xacro:box_inertia m="10" w="${base_width}" d="${base_length}" h="${base_height}"/>
   </link>
 
   <joint name="base_link_joint" type="fixed">
@@ -259,27 +259,28 @@
 
   <!-- Gazebo physics: wheels -->
   <gazebo reference="front_right_drive_wheel">
-    <mu1>1.0</mu1>
-    <mu2>1.0</mu2>
+    <!-- mu1: lateral friction (slip); mu2: second friction direction (rolling). Higher = more grip, less slip. -->
+    <mu1>1.5</mu1>
+    <mu2>1.5</mu2>
     <kp>10000000.0</kp>
     <kd>1.0</kd>
     <minDepth>0.001</minDepth>
   </gazebo>
   <gazebo reference="front_left_wheel">
-    <mu1>1.0</mu1>
-    <mu2>1.0</mu2>
+    <mu1>1.5</mu1>
+    <mu2>1.5</mu2>
     <kp>10000000.0</kp>
     <kd>1.0</kd>
   </gazebo>
   <gazebo reference="rear_left_wheel">
-    <mu1>1.0</mu1>
-    <mu2>1.0</mu2>
+    <mu1>1.5</mu1>
+    <mu2>1.5</mu2>
     <kp>10000000.0</kp>
     <kd>1.0</kd>
   </gazebo>
   <gazebo reference="rear_right_wheel">
-    <mu1>1.0</mu1>
-    <mu2>1.0</mu2>
+    <mu1>1.5</mu1>
+    <mu2>1.5</mu2>
     <kp>10000000.0</kp>
     <kd>1.0</kd>
   </gazebo>
