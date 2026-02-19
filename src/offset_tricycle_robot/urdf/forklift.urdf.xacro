@@ -101,8 +101,9 @@
     <xacro:box_inertia m="10" w="${base_width}" d="${base_length}" h="${base_height}"/>
   </link>
 
+  <!-- base_link at rear axle center (odometry reference point); chassis origin is rear_axle_x ahead -->
   <joint name="base_link_joint" type="fixed">
-    <origin xyz="${-front_axle_x} 0.0 0.275" rpy="0.0 0.0 0.0"/>
+    <origin xyz="${-rear_axle_x} 0.0 0.275" rpy="0.0 0.0 0.0"/>
     <parent link="base_link"/>
     <child link="base_chassis"/>
   </joint>
