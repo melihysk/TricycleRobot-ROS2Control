@@ -33,11 +33,11 @@ offset_tricycle_controller:
     publish_ackermann_command: true
 
     traction:
-      max_velocity: 50.0
+      max_velocity: 2.0
       max_acceleration: 10.0
       max_deceleration: 20.0
     steering:
       min_position: -1.4
       max_position: 1.4
-      max_velocity: 3.0
-      max_acceleration: 5.0
+      max_velocity: 0.5
+      max_acceleration: 1.0

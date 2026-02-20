@@ -26,14 +26,16 @@ class JoystickTeleop(Node):
         super().__init__('joystick_teleop')
         
         # Parameters
-        self.declare_parameter('max_linear_velocity', 0.8)
+        self.declare_parameter('max_linear_velocity', 5.0)
+        self.declare_parameter('max_angular_velocity', 1.4)
         self.declare_parameter('max_steering_angle', 1.5708)
-        self.declare_parameter('wheelbase', 0.975)
+        self.declare_parameter('wheelbase', 1.215)
         self.declare_parameter('deadzone', 0.1)
         self.declare_parameter('throttle_axis', 1)
         self.declare_parameter('steering_axis', 3)
         
         self.max_linear_vel = self.get_parameter('max_linear_velocity').value
+        self.max_angular_vel = self.get_parameter('max_angular_velocity').value
         self.max_steering = self.get_parameter('max_steering_angle').value
         self.wheelbase = self.get_parameter('wheelbase').value
         self.deadzone = self.get_parameter('deadzone').value
@@ -92,7 +94,7 @@ class JoystickTeleop(Node):
             if abs(steering_angle) > 0.01:
                 # Clamp steering to avoid tan(90) = infinity
                 clamped_steering = max(-1.55, min(1.55, steering_angle))
-                msg.twist.angular.z = max(-0.7, min(0.7, -(self.linear_vel * math.tan(clamped_steering) / self.wheelbase)))
+                msg.twist.angular.z = max(-self.max_angular_vel, min(self.max_angular_vel, -(self.linear_vel * math.tan(clamped_steering) / self.wheelbase)))
             else:
                 msg.twist.angular.z = 0.0
         else:
@@ -103,7 +105,7 @@ class JoystickTeleop(Node):
             if abs(self.steering_input) > 0.01:
                 # Scale angular velocity by steering input
                 # This tells controller to turn wheels
-                msg.twist.angular.z = max(-0.7, min(0.7, -self.steering_input * 2.0))
+                msg.twist.angular.z = max(-self.max_angular_vel, min(self.max_angular_vel, -self.steering_input * 2.0))
             else:
                 msg.twist.angular.z = 0.0
         

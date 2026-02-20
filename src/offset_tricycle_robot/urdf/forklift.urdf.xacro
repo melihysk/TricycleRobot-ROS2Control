@@ -258,29 +258,35 @@
     <dynamics damping="0.2" />
   </joint>
 
-  <!-- Gazebo physics: wheels -->
+  <!-- Gazebo physics: wheels
+       mu1 = primary friction (lateral / sideways for a wheel)
+       mu2 = secondary friction (rolling / forward-backward for a wheel)
+       - Drive wheel: high mu2 = less slip, odometry matches simulation better.
+       - Lower mu1 on drive = more lateral slip when steering; lower mu2 = traction slip, controller overestimates distance.
+       - Passive wheels: balanced mu1/mu2 so they roll but do not slide excessively. -->
   <gazebo reference="front_right_drive_wheel">
-    <!-- mu1: lateral friction (slip); mu2: second friction direction (rolling). Higher = more grip, less slip. -->
-    <mu1>1.5</mu1>
-    <mu2>1.5</mu2>
+    <!-- mu2 high = less traction slip. mu1 high = less lateral slip when steering → tighter turn, Gazebo path closer to controller/EKF -->
+    <mu1>1.8</mu1>
+    <mu2>2.5</mu2>
     <kp>10000000.0</kp>
     <kd>1.0</kd>
     <minDepth>0.001</minDepth>
   </gazebo>
   <gazebo reference="front_left_wheel">
-    <mu1>1.5</mu1>
-    <mu2>1.5</mu2>
+    <mu1>0.0</mu1>
+    <mu2>0.0</mu2>
     <kp>10000000.0</kp>
     <kd>1.0</kd>
   </gazebo>
   <gazebo reference="rear_left_wheel">
-    <mu1>1.5</mu1>
+    <!-- Slightly lower mu1 lets rear slip a little laterally → can tighten turn to match tricycle model -->
+    <mu1>0.5</mu1>
     <mu2>1.5</mu2>
     <kp>10000000.0</kp>
     <kd>1.0</kd>
   </gazebo>
   <gazebo reference="rear_right_wheel">
-    <mu1>1.5</mu1>
+    <mu1>0.5</mu1>
     <mu2>1.5</mu2>
     <kp>10000000.0</kp>
     <kd>1.0</kd>
