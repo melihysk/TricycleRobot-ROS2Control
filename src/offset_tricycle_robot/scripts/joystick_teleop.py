@@ -33,6 +33,7 @@ class JoystickTeleop(Node):
         self.declare_parameter('deadzone', 0.1)
         self.declare_parameter('throttle_axis', 1)
         self.declare_parameter('steering_axis', 3)
+        self.declare_parameter('publish_rate', 2)
         
         self.max_linear_vel = self.get_parameter('max_linear_velocity').value
         self.max_angular_vel = self.get_parameter('max_angular_velocity').value
@@ -41,6 +42,7 @@ class JoystickTeleop(Node):
         self.deadzone = self.get_parameter('deadzone').value
         self.throttle_axis = self.get_parameter('throttle_axis').value
         self.steering_axis = self.get_parameter('steering_axis').value
+        self.publish_rate = self.get_parameter('publish_rate').value
         
         # Publisher - TwistStamped!
         self.cmd_vel_pub = self.create_publisher(TwistStamped, '/offset_tricycle_controller/cmd_vel', 10)
@@ -50,10 +52,10 @@ class JoystickTeleop(Node):
         
         # State
         self.linear_vel = 0.0
-        self.steering_input = 0.0  # -1 to 1
+        self.steering_input = 0.0
         
         # Timer for publishing
-        self.timer = self.create_timer(0.02, self.publish_cmd)
+        self.timer = self.create_timer(1/self.publish_rate, self.publish_cmd)
         
         self.get_logger().info('='*60)
         self.get_logger().info('Joystick Teleop for Offset Tricycle')

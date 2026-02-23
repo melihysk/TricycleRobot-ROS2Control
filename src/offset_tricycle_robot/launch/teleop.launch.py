@@ -25,10 +25,10 @@ def generate_launch_description():
                 'use_sim_time': True,
                 'max_linear_velocity': 1.0,
                 'max_steering_angle': 1.5708,
-                'wheelbase': 0.5,
                 'deadzone': 0.1,
                 'throttle_axis': 1,
                 'steering_axis': 3,
+                'publish_rate': 2,
             }]
         ),
     ])
