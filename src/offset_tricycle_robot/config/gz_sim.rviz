@@ -151,7 +151,7 @@ Visualization Manager:
           Value: false
         Value: true
       Enabled: true
-      Keep: 60
+      Keep: 200
       Name: EKF Odometry
       Position Tolerance: 0.10000000149011612
       Shape:
@@ -190,7 +190,7 @@ Visualization Manager:
           Value: false
         Value: false
       Enabled: true
-      Keep: 60
+      Keep: 200
       Name: Wheel Odometry
       Position Tolerance: 0.10000000149011612
       Shape:
@@ -229,7 +229,7 @@ Visualization Manager:
           Value: false
         Value: false
       Enabled: true
-      Keep: 60
+      Keep: 200
       Name: Gazebo Ground Truth
       Position Tolerance: 0.10000000149011612
       Shape:

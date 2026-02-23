@@ -625,22 +625,21 @@ std::tuple<double, double> OffsetTricycleController::twist_to_ackermann(double V
 
   // Curved motion
   // From no-slip derivation (A = rightward offset in URDF):
-  //   Eq(2): Vx = Vs * (cos(psi) + A*sin(psi)/L)
+  //   Eq(2): Vx = Vs * (cos(psi) - A*sin(psi)/L)
   //   Eq(1): omega = Vs * sin(psi) / L
-  //   Eliminating Vs:  Vx/omega = L*cos(psi)/sin(psi) + A = L/tan(psi) + A
-  //   So: tan(psi) = L / (Vx/omega - A)
+  //   So: R = Vx/omega = L/tan(psi) - A  =>  tan(psi) = L / (R + A)
   
-  double R_eff = Vx / theta_dot;  // = L/tan(psi) + A
-  double R_minus_A = R_eff - A;   // = L/tan(psi)
+  double R_eff = Vx / theta_dot;  // = L/tan(psi) - A
+  double R_plus_A = R_eff + A;     // = L/tan(psi)
   
-  if (std::abs(R_minus_A) < 0.01)
+  if (std::abs(R_plus_A) < 0.01)
   {
     // Very tight turn
-    alpha = (R_minus_A >= 0) ? M_PI_2 : -M_PI_2;
+    alpha = (R_plus_A >= 0) ? M_PI_2 : -M_PI_2;
   }
   else
   {
-    alpha = std::atan(L / R_minus_A);
+    alpha = std::atan(L / R_plus_A);
   }
   
   // Wheel angular velocity from Eq(1): omega = Vs * sin(psi) / L
