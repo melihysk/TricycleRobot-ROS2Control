@@ -60,24 +60,28 @@
     </inertial>
   </xacro:macro>
 
-  <!-- Materials (URDF visual) -->
+  <!-- Colors as properties: use in URDF materials and in Gazebo <ambient>/<diffuse> -->
+  <xacro:property name="color_black_rgba" value="0.0 0.0 0.0 1.0"/>
+  <xacro:property name="color_white_rgba" value="1.0 1.0 1.0 1.0"/>
+  <xacro:property name="color_blue_rgba" value="0.1 0.2 0.5 1.0"/>
+  <xacro:property name="color_gray_rgba" value="0.45 0.45 0.45 1.0"/>
+  <xacro:property name="color_red_rgba" value="0.8 0.0 0.0 1.0"/>
+
+  <!-- Materials (URDF / RViz): reference by material name in <visual> -->
   <material name="black">
-    <color rgba="0.0 0.0 0.0 1.0"/>
+    <color rgba="${color_black_rgba}"/>
   </material>
   <material name="white">
-    <color rgba="1.0 1.0 1.0 1.0"/>
+    <color rgba="${color_white_rgba}"/>
   </material>
-  <material name="wheel">
-    <color rgba="0.15 0.15 0.15 1.0"/>
+  <material name="blue">
+    <color rgba="${color_blue_rgba}"/>
   </material>
-  <material name="myblue">
-    <color rgba="0.0 0.0 0.5 1.0"/>
+  <material name="gray">
+    <color rgba="${color_gray_rgba}"/>
   </material>
-  <material name="base">
-    <color rgba="0.2 0.05 0.05 1.0"/>
-  </material>
-  <material name="lidar">
-    <color rgba="0.8 0.0 0.0 1.0"/>
+  <material name="red">
+    <color rgba="${color_red_rgba}"/>
   </material>
 
   <!-- Robot Base -->
@@ -96,7 +100,7 @@
       <geometry>
         <box size="${base_length} ${base_width} ${base_height}"/>
       </geometry>
-      <material name="base"/>
+      <material name="gray"/>
     </visual>
     <xacro:box_inertia m="10" w="${base_width}" d="${base_length}" h="${base_height}"/>
   </link>
@@ -114,7 +118,7 @@
       <geometry>
         <box size="0.15 ${base_width} 0.3"/>
       </geometry>
-      <material name="lidar"/>
+      <material name="red"/>
     </visual>
     <collision>
       <geometry>
@@ -142,7 +146,7 @@
         <geometry>
           <cylinder radius="${rear_wheel_radius}" length="${rear_wheel_width}"/>
         </geometry>
-        <material name="wheel"/>
+        <material name="black"/>
       </visual>
       <xacro:cylinder_inertia m="1" r="${rear_wheel_radius}" h="${rear_wheel_width}"/>
     </link>
@@ -164,7 +168,7 @@
       <geometry>
         <cylinder radius="${front_right_drive_wheel_radius}" length="${front_right_drive_wheel_width}"/>
       </geometry>
-      <material name="wheel"/>
+      <material name="black"/>
     </visual>
     <collision>
       <geometry>
@@ -180,7 +184,7 @@
       <geometry>
         <cylinder radius="${front_left_wheel_radius}" length="${front_left_wheel_width}"/>
       </geometry>
-      <material name="wheel"/>
+      <material name="black"/>
     </visual>
     <collision>
       <geometry>
@@ -205,7 +209,7 @@
       <geometry>
         <cylinder radius="0.045" length="0.04"/>
       </geometry>
-      <material name="myblue"/>
+      <material name="blue"/>
     </visual>
     <collision>
       <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
@@ -231,7 +235,7 @@
       <geometry>
         <cylinder radius="0.02" length="0.195"/>
       </geometry>
-      <material name="myblue"/>
+      <material name="blue"/>
     </visual>
     <collision>
       <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
@@ -243,7 +247,7 @@
   </link>
 
   <!-- Bearing_gear at chassis height (z=0 in base_chassis) -->
-  <joint name="drive_unit" type="fixed">
+  <joint name="bearing_gear_joint" type="fixed">
     <parent link="bearing"/>
     <child link="bearing_gear"/>
     <origin xyz="0.0 0.0 ${-base_height/2}"/>
@@ -298,7 +302,7 @@
       <geometry>
         <box size="0.04 0.04 0.02"/>
       </geometry>
-      <material name="black"/>
+      <material name="blue"/>
     </visual>
     <collision>
       <geometry>
@@ -379,80 +383,8 @@
   <gazebo reference="base_chassis">
     <visual>
       <material>
-        <ambient>1.0 1.0 1.0 1</ambient>
-        <diffuse>1.0 1.0 1.0 1</diffuse>
-      </material>
-    </visual>
-  </gazebo>
-
-  <gazebo reference="rear_right_wheel">
-    <visual>
-      <material>
-        <ambient>0.3 0.3 0.3 1</ambient>
-        <diffuse>0.3 0.3 0.3 1</diffuse>
-      </material>
-    </visual>
-  </gazebo>
-
-  <gazebo reference="rear_left_wheel">
-    <visual>
-      <material>
-        <ambient>0.3 0.3 0.3 1</ambient>
-        <diffuse>0.3 0.3 0.3 1</diffuse>
-      </material>
-    </visual>
-  </gazebo>
-
-  <gazebo reference="front_right_drive_wheel">
-    <visual>
-      <material>
-        <ambient>0.3 0.3 0.3 1</ambient>
-        <diffuse>0.3 0.3 0.3 1</diffuse>
-      </material>
-    </visual>
-  </gazebo>
-
-  <gazebo reference="front_left_wheel">
-    <visual>
-      <material>
-        <ambient>0.3 0.3 0.3 1</ambient>
-        <diffuse>0.3 0.3 0.3 1</diffuse>
-      </material>
-    </visual>
-  </gazebo>
-
-  <gazebo reference="bearing">
-    <visual>
-      <material>
-        <ambient>0.1 0.1 0.1 1</ambient>
-        <diffuse>0.1 0.1 0.1 1</diffuse>
-      </material>
-    </visual>
-  </gazebo>
-
-  <gazebo reference="bearing_gear">
-    <visual>
-      <material>
-        <ambient>0.9 0.9 0.0 1</ambient>
-        <diffuse>0.9 0.9 0.0 1</diffuse>
-      </material>
-    </visual>
-  </gazebo>
-
-  <gazebo reference="steering_link">
-    <visual>
-      <material>
-        <ambient>1.0 1.0 1.0 1</ambient>
-        <diffuse>1.0 1.0 1.0 1</diffuse>
-      </material>
-    </visual>
-  </gazebo>
-
-  <gazebo reference="steering_wheel">
-    <visual>
-      <material>
-        <ambient>0.1 0.1 0.1 1</ambient>
-        <diffuse>0.1 0.1 0.1 1</diffuse>
+        <ambient>${color_gray_rgba}</ambient>
+        <diffuse>${color_gray_rgba}</diffuse>
       </material>
     </visual>
   </gazebo>
@@ -460,8 +392,62 @@
   <gazebo reference="front_panel">
     <visual>
       <material>
-        <ambient>0.8 0.0 0.0 1</ambient>
-        <diffuse>0.8 0.0 0.0 1</diffuse>
+        <ambient>${color_red_rgba}</ambient>
+        <diffuse>${color_red_rgba}</diffuse>
+      </material>
+    </visual>
+  </gazebo>
+
+  <gazebo reference="rear_right_wheel">
+    <visual>
+      <material>
+        <ambient>${color_black_rgba}</ambient>
+        <diffuse>${color_black_rgba}</diffuse>
+      </material>
+    </visual>
+  </gazebo>
+
+  <gazebo reference="rear_left_wheel">
+    <visual>
+      <material>
+        <ambient>${color_black_rgba}</ambient>
+        <diffuse>${color_black_rgba}</diffuse>
+      </material>
+    </visual>
+  </gazebo>
+
+  <gazebo reference="front_right_drive_wheel">
+    <visual>
+      <material>
+        <ambient>${color_black_rgba}</ambient>
+        <diffuse>${color_black_rgba}</diffuse>
+      </material>
+    </visual>
+  </gazebo>
+
+  <gazebo reference="front_left_wheel">
+    <visual>
+      <material>
+        <ambient>${color_black_rgba}</ambient>
+        <diffuse>${color_black_rgba}</diffuse>
+      </material>
+    </visual>
+  </gazebo>
+
+  <gazebo reference="bearing">
+    <visual>
+      <material>
+        <ambient>${color_blue_rgba}</ambient>
+        <diffuse>${color_blue_rgba}</diffuse>
+      </material>
+    </visual>
+  </gazebo>
+
+  <gazebo reference="bearing_gear">
+    <visual>
+      <material>
+        <ambient>${color_blue_rgba}</ambient>
+        <diffuse>${color_blue_rgba}</diffuse>
       </material>
     </visual>
   </gazebo>
