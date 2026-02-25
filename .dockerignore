@@ -1,0 +1,20 @@
+# Colcon build çıktıları (image içinde yeniden derlenecek)
+build/
+install/
+log/
+
+# Git ve IDE
+.git/
+.gitignore
+.cursor/
+.vscode/
+*.swp
+*~
+
+# Gereksiz dosyalar
+*.md
+!README.md
+Dockerfile
+.dockerignore
+docker-compose*.yml
+*.pdf

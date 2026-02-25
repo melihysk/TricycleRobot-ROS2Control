@@ -5,5 +5,3 @@ log/
 
 # Git
 .git/
-
-odom_deviation_plotter/

@@ -1,0 +1,37 @@
+# forklift - Simülasyonu GUI (RViz2, Gazebo) ile çalıştırmak için
+# Kullanım: docker compose run forklift bash // --name forklift --rm
+# Konteyner içinde: ros2 launch offset_tricycle_robot tricycle_robot_sim.launch.py
+
+services:
+  forklift:
+    build: .
+    image: gebot:latest
+    container_name: wilson
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - XDG_RUNTIME_DIR=/tmp/runtime-root
+      # NVIDIA kartını Docker içinde aktif eden değişkenler
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all,graphics,utility,compute
+      - __NV_PRIME_RENDER_OFFLOAD=1
+      - __GLX_VENDOR_LIBRARY_NAME=nvidia
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    # Donanım (GPU ve Joystick) erişimi için en kesin çözüm
+    privileged: true 
+    network_mode: host
+    stdin_open: true
+    tty: true
+
+    devices:
+      - /dev/dri:/dev/dri
+      - /dev/input:/dev/input
+    # Ekran kartı rezervasyonu (NVIDIA Toolkit bunu okur)
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
