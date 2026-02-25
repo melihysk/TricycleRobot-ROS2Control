@@ -5,7 +5,7 @@
 services:
   forklift:
     build: .
-    image: gebot:latest
+    image: forklift:latest
     container_name: wilson
     environment:
       - DISPLAY=${DISPLAY}
