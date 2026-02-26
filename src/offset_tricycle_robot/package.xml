@@ -21,6 +21,7 @@
   <depend>joy</depend>
   <depend>robot_localization</depend>
   <depend>sensor_msgs</depend>
+  <depend>rf2o_laser_odometry</depend>
 
   <export>
     <build_type>ament_cmake</build_type>
