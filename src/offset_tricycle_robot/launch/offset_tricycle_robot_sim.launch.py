@@ -4,7 +4,7 @@ import xacro
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, TimerAction
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, SetEnvironmentVariable, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
@@ -29,12 +29,22 @@ def generate_launch_description():
         parameters=[robot_description],
     )
 
+    # Warehouse world path
+    world_file = os.path.join(pkg_path, 'worlds', 'warehouse.sdf')
+    worlds_dir = os.path.join(pkg_path, 'worlds')
+
+    # GZ_SIM_RESOURCE_PATH: Gazebo'nun lokal modelleri (Warehouse) bulabilmesi için
+    gz_resource_path = SetEnvironmentVariable(
+        name='GZ_SIM_RESOURCE_PATH',
+        value=worlds_dir,
+    )
+
     # Gazebo Sim (gz sim) başlatma
     gazebo_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             os.path.join(get_package_share_directory('ros_gz_sim'), 'launch', 'gz_sim.launch.py')
         ]),
-        launch_arguments={'gz_args': '-r empty.sdf'}.items(),
+        launch_arguments={'gz_args': f'-r {world_file}'}.items(),
     )
 
     # Robot spawn - ros_gz_sim kullanarak
@@ -43,7 +53,7 @@ def generate_launch_description():
         executable='create',
         arguments=[
             '-topic', 'robot_description',
-            '-name', 'gebot',
+            '-name', 'forklift',
             '-z', '0.5',
         ],
         output='screen',
@@ -56,7 +66,7 @@ def generate_launch_description():
         arguments=[
             '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
             '/imu/data@sensor_msgs/msg/Imu[gz.msgs.IMU',
-            '/model/gebot/odometry@nav_msgs/msg/Odometry[gz.msgs.Odometry',
+            '/model/forklift/odometry@nav_msgs/msg/Odometry[gz.msgs.Odometry',
             '/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan',
         ],
         output='screen',
@@ -122,11 +132,11 @@ def generate_launch_description():
             'base_frame_id' : 'base_link',
             'odom_frame_id' : 'odom',
             'init_pose_from_topic' : '',
-            'freq' : 20.0}],
+            'freq' : 10.0}],
     )
 
     # RF2O needs /scan; start after bridge and robot are up
-    delayed_rf2o = TimerAction(period=6.0, actions=[rf2o_laser_odometry_node])
+    delayed_rf2o = TimerAction(period=10.0, actions=[rf2o_laser_odometry_node])
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -139,6 +149,7 @@ def generate_launch_description():
             default_value=rviz_config_path,
             description='Absolute path to rviz config file',
         ),
+        gz_resource_path,
         node_robot_state_publisher,
         gazebo_sim,
         spawn_entity,
