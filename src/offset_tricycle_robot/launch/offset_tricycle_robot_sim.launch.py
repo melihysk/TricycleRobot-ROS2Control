@@ -120,23 +120,23 @@ def generate_launch_description():
         arguments=['-d', LaunchConfiguration('rvizconfig')],
     )
 
-    rf2o_laser_odometry_node = Node(
-        package='rf2o_laser_odometry',
-        executable='rf2o_laser_odometry_node',
-        name='rf2o_laser_odometry',
-        output='screen',
-        parameters=[{
-            'laser_scan_topic' : '/scan',
-            'odom_topic' : '/odom_rf2o',
-            'publish_tf' : False,
-            'base_frame_id' : 'base_link',
-            'odom_frame_id' : 'odom',
-            'init_pose_from_topic' : '',
-            'freq' : 10.0}],
-    )
+    # rf2o_laser_odometry_node = Node(
+    #     package='rf2o_laser_odometry',
+    #     executable='rf2o_laser_odometry_node',
+    #     name='rf2o_laser_odometry',
+    #     output='screen',
+    #     parameters=[{
+    #         'laser_scan_topic' : '/scan',
+    #         'odom_topic' : '/odom_rf2o',
+    #         'publish_tf' : False,
+    #         'base_frame_id' : 'base_link',
+    #         'odom_frame_id' : 'odom',
+    #         'init_pose_from_topic' : '',
+    #         'freq' : 10.0}],
+    # )
 
-    # RF2O needs /scan; start after bridge and robot are up
-    delayed_rf2o = TimerAction(period=10.0, actions=[rf2o_laser_odometry_node])
+    # # RF2O needs /scan; start after bridge and robot are up
+    # delayed_rf2o = TimerAction(period=10.0, actions=[rf2o_laser_odometry_node])
 
     laser_scan_matcher_odometry_node = Node(
         package='ros2_laser_scan_matcher',
@@ -153,8 +153,19 @@ def generate_launch_description():
             }],
     )
 
-    # RF2O needs /scan; start after bridge and robot are up
-    delayed_scan_matcher = TimerAction(period=10.0, actions=[laser_scan_matcher_odometry_node])
+    # # RF2O needs /scan; start after bridge and robot are up
+    # delayed_scan_matcher = TimerAction(period=10.0, actions=[laser_scan_matcher_odometry_node])
+
+    # # SLAM Toolbox (online sync)
+    # slam_params_path = os.path.join(pkg_path, 'config', 'mapper_params_online_sync.yaml')
+    # slam_toolbox_node = Node(
+    #     package='slam_toolbox',
+    #     executable='sync_slam_toolbox_node',
+    #     name='slam_toolbox',
+    #     output='screen',
+    #     parameters=[slam_params_path, {'use_sim_time': use_sim_time}],
+    # )
+    # delayed_slam = TimerAction(period=12.0, actions=[slam_toolbox_node])
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -175,6 +186,7 @@ def generate_launch_description():
         delayed_controller_spawner,
         delayed_ekf,
         rviz2_node,
-        delayed_rf2o,
+        # delayed_rf2o,
         delayed_scan_matcher,
+        #delayed_slam,
     ])
