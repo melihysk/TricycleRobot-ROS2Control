@@ -13,7 +13,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 
 install(
-  PROGRAMS scripts/joystick_teleop.py
+  PROGRAMS scripts/joystick_teleop.py scripts/cmd_vel_relay.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

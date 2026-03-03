@@ -88,6 +88,14 @@ def generate_launch_description():
         output='screen',
     )
 
+    # /cmd_vel -> /offset_tricycle_controller/cmd_vel relay (Nav2/teleop çıktısı controller'a gitsin)
+    cmd_vel_relay = Node(
+        package='offset_tricycle_robot',
+        executable='cmd_vel_relay.py',
+        name='cmd_vel_relay',
+        output='screen',
+    )
+
     # Controller'ları spawn sonrası başlat (delay ile)
     delayed_controller_spawner = TimerAction(
         period=5.0,
@@ -184,9 +192,10 @@ def generate_launch_description():
         spawn_entity,
         bridge,
         delayed_controller_spawner,
+        cmd_vel_relay,
         delayed_ekf,
         rviz2_node,
-        # delayed_rf2o,
-        delayed_scan_matcher,
+        #delayed_rf2o,
+        #delayed_scan_matcher,
         #delayed_slam,
     ])
