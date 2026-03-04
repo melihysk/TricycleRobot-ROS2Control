@@ -41,8 +41,8 @@ controller_server:
     # Progress checker parameters
     progress_checker:
       plugin: "nav2_controller::SimpleProgressChecker"
-      required_movement_radius: 0.5
-      movement_time_allowance: 10.0
+      required_movement_radius: 0.35
+      movement_time_allowance: 15.0
     # Goal checker parameters
     #precise_goal_checker:
     #  plugin: "nav2_controller::SimpleGoalChecker"
@@ -65,25 +65,28 @@ controller_server:
       ay_min: -3.0
       az_max: 3.5
       vx_std: 0.2
-      vy_std: 0.2
+      # Tricycle/Ackermann: no lateral motion; vy unused but kept for param compatibility
+      vy_std: 0.0
       wz_std: 0.4
       vx_max: 0.5
       vx_min: -0.35
-      vy_max: 0.5
+      vy_max: 0.0
       wz_max: 1.9
       iteration_count: 1
       prune_distance: 1.7
       transform_tolerance: 0.1
       temperature: 0.3
       gamma: 0.015
-      motion_model: "DiffDrive"
+      # Tricycle: use Ackermann (non-holonomic, min turning radius); not DiffDrive
+      motion_model: "Ackermann"
       visualize: true
       regenerate_noises: true
       TrajectoryVisualizer:
         trajectory_step: 5
         time_step: 3
+      # Offset tricycle: wheelbase 1.215 m, max steer ~1.4 rad → R_min ≈ L/tan(δ) ≈ 0.19 m
       AckermannConstraints:
-        min_turning_r: 0.2
+        min_turning_r: 0.25
       critics: [
         "ConstraintCritic", "CostCritic", "GoalCritic",
         "GoalAngleCritic", "PathAlignCritic", "PathFollowCritic",
@@ -107,12 +110,13 @@ controller_server:
         cost_power: 1
         cost_weight: 5.0
         threshold_to_consider: 0.5
+      # Penalizes trajectories in costmap cost; too strict → "Optimizer fail to compute path"
       CostCritic:
         enabled: true
         cost_power: 1
-        cost_weight: 3.81
-        near_collision_cost: 253
-        critical_cost: 300.0
+        cost_weight: 2.2
+        near_collision_cost: 252
+        critical_cost: 248.0
         consider_footprint: true
         collision_cost: 1000000.0
         near_goal_distance: 1.0
@@ -120,8 +124,9 @@ controller_server:
       PathAlignCritic:
         enabled: true
         cost_power: 1
-        cost_weight: 14.0
-        max_path_occupancy_ratio: 0.05
+        cost_weight: 12.0
+        # Allow path through slightly more cost so robot can escape blue/purple zone
+        max_path_occupancy_ratio: 0.12
         trajectory_point_step: 4
         threshold_to_consider: 0.5
         offset_from_furthest: 20
@@ -153,41 +158,62 @@ local_costmap:
       global_frame: odom
       robot_base_frame: base_link
       rolling_window: true
-      width: 3
-      height: 3
+      width: 4
+      height: 4
       resolution: 0.05
       # Polygon from URDF: base_link at rear axle; chassis 1.896 x 0.79 m
       footprint: "[ [1.448, -0.395], [1.448, 0.395], [-0.448, 0.395], [-0.448, -0.395] ]"
-      plugins: ["voxel_layer", "inflation_layer"]
+      plugins: ["obstacle_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0
-        # Must be >= circumscribed radius of footprint (~1.51 m from base_link to front corner)
-        inflation_radius: 1.55
-      voxel_layer:
-        plugin: "nav2_costmap_2d::VoxelLayer"
+        enabled: true
+        # Higher = cost drops faster with distance → narrower blue/purple band, easier to escape
+        cost_scaling_factor: 6.0
+        # SMAC planner requires inflation_radius >= circumscribed radius (~1.50 m); use margin so inscribed cost is set
+        inflation_radius: 1.65
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
-        publish_voxel_map: True
-        origin_z: 0.0
-        z_resolution: 0.05
-        z_voxels: 16
-        max_obstacle_height: 2.0
-        mark_threshold: 0
         observation_sources: scan
+        footprint_clearing_enabled: true
+        max_obstacle_height: 2.0
+        combination_method: 1
         scan:
           topic: /scan
+          obstacle_max_range: 2.5
+          obstacle_min_range: 0.0
+          raytrace_max_range: 3.0
+          raytrace_min_range: 0.0
           max_obstacle_height: 2.0
+          min_obstacle_height: 0.0
           clearing: True
           marking: True
           data_type: "LaserScan"
-          raytrace_max_range: 3.0
-          raytrace_min_range: 0.0
-          obstacle_max_range: 2.5
-          obstacle_min_range: 0.0
-      static_layer:
-        plugin: "nav2_costmap_2d::StaticLayer"
-        map_subscribe_transient_local: True
-      always_send_full_costmap: True
+          inf_is_valid: false
+      # voxel_layer:
+      #   plugin: "nav2_costmap_2d::VoxelLayer"
+      #   enabled: True
+      #   publish_voxel_map: True
+      #   origin_z: 0.0
+      #   z_resolution: 0.05
+      #   z_voxels: 16
+      #   max_obstacle_height: 2.0
+      #   mark_threshold: 0
+      #   observation_sources: scan
+      #   scan:
+      #     topic: /scan
+      #     max_obstacle_height: 2.0
+      #     clearing: True
+      #     marking: True
+      #     data_type: "LaserScan"
+      #     raytrace_max_range: 3.0
+      #     raytrace_min_range: 0.0
+      #     obstacle_max_range: 2.5
+      #     obstacle_min_range: 0.0
+      # static_layer:
+      #   plugin: "nav2_costmap_2d::StaticLayer"
+      #   map_subscribe_transient_local: True
+      # always_send_full_costmap: True
 
 global_costmap:
   global_costmap:
@@ -220,12 +246,11 @@ global_costmap:
         map_subscribe_transient_local: True
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0
-        # Must be >= circumscribed radius of footprint (~1.51 m)
-        inflation_radius: 1.55
+        enabled: true
+        cost_scaling_factor: 6.0
+        # SMAC planner: inflation_radius must be >= circumscribed radius (~1.50 m) so inscribed cost > 0
+        inflation_radius: 1.65
       always_send_full_costmap: True
-
-
 
 planner_server:
   ros__parameters:
@@ -233,10 +258,41 @@ planner_server:
     planner_plugins: ["GridBased"]
     costmap_update_timeout: 1.0
     GridBased:
-      plugin: "nav2_navfn_planner::NavfnPlanner"
+      plugin: "nav2_smac_planner::SmacPlannerHybrid"
       tolerance: 0.5
-      use_astar: false
-      allow_unknown: true
+      downsample_costmap: false
+      downsampling_factor: 1
+      allow_unknown: false
+      max_iterations: 1000000
+      max_on_approach_iterations: 1000
+      terminal_checking_interval: 5000
+      max_planning_time: 3.5
+      motion_model_for_search: "DUBIN"
+      cost_travel_multiplier: 2.0
+      angle_quantization_bins: 64
+      analytic_expansion_ratio: 3.5
+      analytic_expansion_max_length: 3.0
+      analytic_expansion_max_cost: 200.0
+      analytic_expansion_max_cost_override: false
+      # minimum_turning_radius: R_min = wheelbase / tan(max_steer_angle). URDF: wheelbase=1.215m, steer limit=±1.4rad → R_min≈0.19m; 0.25m güvenlik payı ile.
+      minimum_turning_radius: 0.25
+      reverse_penalty: 2.1
+      change_penalty: 0.0
+      non_straight_penalty: 1.20
+      cost_penalty: 2.0
+      retrospective_penalty: 0.025
+      rotation_penalty: 5.0
+      lookup_table_size: 20.0
+      cache_obstacle_heuristic: true
+      allow_reverse_expansion: false
+      smooth_path: true
+      debug_visualizations: false
+      smoother:
+        max_iterations: 1000
+        w_smooth: 0.3
+        w_data: 0.2
+        tolerance: 1.0e-10
+        do_refinement: true
 
 smoother_server:
   ros__parameters:

@@ -59,7 +59,7 @@ Visualization Manager:
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /robot_description
-      Enabled: false
+      Enabled: true
       Links:
         All Links Enabled: true
         Expand Joint Details: false
@@ -541,7 +541,7 @@ Visualization Manager:
           Scale: 1
           Value: false
         Value: false
-      Enabled: true
+      Enabled: false
       Keep: 200
       Name: Wheel Odometry
       Position Tolerance: 0.10000000149011612
@@ -658,7 +658,7 @@ Visualization Manager:
           Scale: 1
           Value: false
         Value: false
-      Enabled: true
+      Enabled: false
       Keep: 200
       Name: RF2O Laser Odometry
       Position Tolerance: 0.10000000149011612
@@ -697,7 +697,7 @@ Visualization Manager:
           Scale: 1
           Value: false
         Value: false
-      Enabled: true
+      Enabled: false
       Keep: 200
       Name: Laser Scan Matcher
       Position Tolerance: 0.10000000149011612
