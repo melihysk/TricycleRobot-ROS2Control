@@ -50,7 +50,7 @@ amcl:
 # Map Server: hazır harita yükleme (AMCL ile kullanım için)
 map_server:
   ros__parameters:
-    yaml_filename: "/home/melih/Desktop/bos/slam_toolbox/warehouse.yaml"
+    yaml_filename: "/home/melih/Desktop/forklift/src/offset_tricycle_robot/maps/map/warehouse.yaml"
 
 map_saver:
   ros__parameters:

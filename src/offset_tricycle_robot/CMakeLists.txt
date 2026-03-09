@@ -18,7 +18,7 @@ install(
 )
 
 install(
-  DIRECTORY launch urdf config worlds
+  DIRECTORY launch urdf config worlds maps
   DESTINATION share/${PROJECT_NAME}
 )
 

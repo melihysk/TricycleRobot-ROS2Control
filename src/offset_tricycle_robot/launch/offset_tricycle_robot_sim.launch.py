@@ -146,20 +146,20 @@ def generate_launch_description():
     # # RF2O needs /scan; start after bridge and robot are up
     # delayed_rf2o = TimerAction(period=10.0, actions=[rf2o_laser_odometry_node])
 
-    laser_scan_matcher_odometry_node = Node(
-        package='ros2_laser_scan_matcher',
-        executable='laser_scan_matcher',
-        name='laser_scan_matcher',
-        output='screen',
-        parameters=[{
-                'base_frame': 'base_link',
-                'odom_frame': 'odom',
-                'map_frame': 'map',
-                'laser_frame': 'lidar_link',
-                'publish_odom': 'odom_scan_matcher',
-                'publish_tf': False,
-            }],
-    )
+    # laser_scan_matcher_odometry_node = Node(
+    #     package='ros2_laser_scan_matcher',
+    #     executable='laser_scan_matcher',
+    #     name='laser_scan_matcher',
+    #     output='screen',
+    #     parameters=[{
+    #             'base_frame': 'base_link',
+    #             'odom_frame': 'odom',
+    #             'map_frame': 'map',
+    #             'laser_frame': 'lidar_link',
+    #             'publish_odom': 'odom_scan_matcher',
+    #             'publish_tf': False,
+    #         }],
+    # )
 
     # # RF2O needs /scan; start after bridge and robot are up
     # delayed_scan_matcher = TimerAction(period=10.0, actions=[laser_scan_matcher_odometry_node])
