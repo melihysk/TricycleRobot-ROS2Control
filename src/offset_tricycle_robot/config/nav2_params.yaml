@@ -12,10 +12,6 @@ bt_navigator:
       plugin: "nav2_bt_navigator::NavigateToPoseNavigator"
     navigate_through_poses:
       plugin: "nav2_bt_navigator::NavigateThroughPosesNavigator"
-    # 'default_nav_through_poses_bt_xml' and 'default_nav_to_pose_bt_xml' are use defaults:
-    # nav2_bt_navigator/navigate_to_pose_w_replanning_and_recovery.xml
-    # nav2_bt_navigator/navigate_through_poses_w_replanning_and_recovery.xml
-    # They can be set here or via a RewrittenYaml remap from a parent launch file to Nav2.
 
     # plugin_lib_names is used to add custom BT plugins to the executor (vector of strings).
     # Built-in plugins are added automatically
@@ -167,8 +163,8 @@ local_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         enabled: true
-        # Higher = cost drops faster with distance → narrower blue/purple band, easier to escape
-        cost_scaling_factor: 6.0
+        # Must be low enough that cost > 0 at circumscribed radius (~1.50 m); csf <= 5.0 required, 3.0 gives ~10 cost
+        cost_scaling_factor: 3.0
         # SMAC planner requires inflation_radius >= circumscribed radius (~1.50 m); use margin so inscribed cost is set
         inflation_radius: 1.65
       obstacle_layer:
@@ -247,8 +243,9 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         enabled: true
-        cost_scaling_factor: 6.0
-        # SMAC planner: inflation_radius must be >= circumscribed radius (~1.50 m) so inscribed cost > 0
+        # Must be low enough that cost > 0 at circumscribed radius (~1.50 m); csf <= 5.0 required, 3.0 gives ~10 cost
+        cost_scaling_factor: 3.0
+        # SMAC planner: inflation_radius must be >= circumscribed radius (~1.50 m) so    cost > 0
         inflation_radius: 1.65
       always_send_full_costmap: True
 
