@@ -72,6 +72,35 @@ def generate_launch_description():
         output='screen',
     )
 
+    # 2D LaserScan -> 3D PointCloud2 (KISS-ICP için)
+    laser_to_pointcloud_node = Node(
+        package='offset_tricycle_robot',
+        executable='laser_scan_to_pointcloud.py',
+        name='laser_scan_to_pointcloud',
+        output='screen',
+        parameters=[{'use_sim_time': use_sim_time}],
+        remappings=[
+            ('scan', '/scan'),
+            ('lidar/points', '/lidar/points'),
+        ],
+    )
+
+    # KISS-ICP LiDAR odometry (3D point cloud ile; 2D scan dönüştürülmüş nokta bulutu kullanır)
+    kiss_icp_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(get_package_share_directory('kiss_icp'), 'launch', 'odometry.launch.py'),
+        ]),
+        launch_arguments={
+            'topic': '/lidar/points',
+            'base_frame': 'base_link',
+            'lidar_odom_frame': 'odom',
+            'publish_odom_tf': 'true',
+            'visualize': 'false',
+            'use_sim_time': use_sim_time,
+        }.items(),
+    )
+    delayed_kiss_icp = TimerAction(period=8.0, actions=[kiss_icp_launch])
+
     # Joint State Broadcaster
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
@@ -172,8 +201,10 @@ def generate_launch_description():
         gazebo_sim,
         spawn_entity,
         bridge,
+        laser_to_pointcloud_node,
         delayed_controller_spawner,
         delayed_ekf,
+        delayed_kiss_icp,
         rviz2_node,
         delayed_rf2o,
         delayed_scan_matcher,

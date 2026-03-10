@@ -150,8 +150,8 @@ Visualization Manager:
           Scale: 1
           Value: false
         Value: true
-      Enabled: true
-      Keep: 200
+      Enabled: false
+      Keep: 500
       Name: EKF Odometry
       Position Tolerance: 0.10000000149011612
       Shape:
@@ -189,8 +189,8 @@ Visualization Manager:
           Scale: 1
           Value: false
         Value: false
-      Enabled: true
-      Keep: 200
+      Enabled: false
+      Keep: 500
       Name: Wheel Odometry
       Position Tolerance: 0.10000000149011612
       Shape:
@@ -229,7 +229,7 @@ Visualization Manager:
           Value: false
         Value: false
       Enabled: true
-      Keep: 200
+      Keep: 1500
       Name: Gazebo Ground Truth
       Position Tolerance: 0.10000000149011612
       Shape:
@@ -268,14 +268,14 @@ Visualization Manager:
           Value: false
         Value: false
       Enabled: true
-      Keep: 200
+      Keep: 1500
       Name: RF2O Laser Odometry
       Position Tolerance: 0.10000000149011612
       Shape:
         Alpha: 1
         Axes Length: 0.5
         Axes Radius: 0.05000000074505806
-        Color: 255; 165; 0
+        Color: 153; 193; 241
         Head Length: 0.10000000149011612
         Head Radius: 0.05000000074505806
         Shaft Length: 0.30000001192092896
@@ -302,19 +302,19 @@ Visualization Manager:
           Value: false
         Position:
           Alpha: 0.30000001192092896
-          Color: 18; 27; 158
+          Color: 102; 80; 12 
           Scale: 1
           Value: false
         Value: false
       Enabled: true
-      Keep: 200
+      Keep: 1500
       Name: Laser Scan Matcher
       Position Tolerance: 0.10000000149011612
       Shape:
         Alpha: 1
         Axes Length: 0.5
         Axes Radius: 0.05000000074505806
-        Color: 102; 80; 12
+        Color: 249; 240; 107
         Head Length: 0.10000000149011612
         Head Radius: 0.05000000074505806
         Shaft Length: 0.30000001192092896
@@ -327,6 +327,45 @@ Visualization Manager:
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /odom_scan_matcher
+      Value: true
+    - Angle Tolerance: 0.10000000149011612
+      Class: rviz_default_plugins/Odometry
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: LOCAL
+          Offset: 1
+          Scale: 1
+          Value: false
+        Position:
+          Alpha: 0.30000001192092896
+          Color: 102; 80; 12 
+          Scale: 1
+          Value: false
+        Value: false
+      Enabled: true
+      Keep: 1500
+      Name: Kiss-icp
+      Position Tolerance: 0.10000000149011612
+      Shape:
+        Alpha: 1
+        Axes Length: 0.5
+        Axes Radius: 0.05000000074505806
+        Color: 246; 97; 81
+        Head Length: 0.10000000149011612
+        Head Radius: 0.05000000074505806
+        Shaft Length: 0.30000001192092896
+        Shaft Radius: 0.02500000037252903
+        Value: Arrow
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /kiss/odometry
       Value: true
     - Class: rviz_default_plugins/TF
       Enabled: true
