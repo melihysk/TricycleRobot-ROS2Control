@@ -94,7 +94,7 @@ def generate_launch_description():
             'topic': '/lidar/points',
             'base_frame': 'base_link',
             'lidar_odom_frame': 'odom',
-            'publish_odom_tf': 'true',
+            'publish_odom_tf': 'false',
             'visualize': 'false',
             'use_sim_time': use_sim_time,
         }.items(),
@@ -149,41 +149,61 @@ def generate_launch_description():
         arguments=['-d', LaunchConfiguration('rvizconfig')],
     )
 
-    rf2o_laser_odometry_node = Node(
-        package='rf2o_laser_odometry',
-        executable='rf2o_laser_odometry_node',
-        name='rf2o_laser_odometry',
-        output='screen',
-        parameters=[{
-            'laser_scan_topic' : '/scan',
-            'odom_topic' : '/odom_rf2o',
-            'publish_tf' : False,
-            'base_frame_id' : 'base_link',
-            'odom_frame_id' : 'odom',
-            'init_pose_from_topic' : '',
-            'freq' : 10.0}],
-    )
+    # rf2o_laser_odometry_node = Node(
+    #     package='rf2o_laser_odometry',
+    #     executable='rf2o_laser_odometry_node',
+    #     name='rf2o_laser_odometry',
+    #     output='screen',
+    #     parameters=[{
+    #         'laser_scan_topic' : '/scan',
+    #         'odom_topic' : '/odom_rf2o',
+    #         'publish_tf' : False,
+    #         'base_frame_id' : 'base_link',
+    #         'odom_frame_id' : 'odom',
+    #         'init_pose_from_topic' : '',
+    #         'freq' : 10.0}],
+    # )
 
     # RF2O needs /scan; start after bridge and robot are up
-    delayed_rf2o = TimerAction(period=10.0, actions=[rf2o_laser_odometry_node])
+    # delayed_rf2o = TimerAction(period=10.0, actions=[rf2o_laser_odometry_node])
 
-    laser_scan_matcher_odometry_node = Node(
-        package='ros2_laser_scan_matcher',
-        executable='laser_scan_matcher',
-        name='laser_scan_matcher',
-        output='screen',
-        parameters=[{
-                'base_frame': 'base_link',
-                'odom_frame': 'odom',
-                'map_frame': 'map',
-                'laser_frame': 'lidar_link',
-                'publish_odom': 'odom_scan_matcher',
-                'publish_tf': False,
-            }],
+    # laser_scan_matcher_odometry_node = Node(
+    #     package='ros2_laser_scan_matcher',
+    #     executable='laser_scan_matcher',
+    #     name='laser_scan_matcher',
+    #     output='screen',
+    #     parameters=[{
+    #             'base_frame': 'base_link',
+    #             'odom_frame': 'odom',
+    #             'map_frame': 'map',
+    #             'laser_frame': 'lidar_link',
+    #             'publish_odom': 'odom_scan_matcher',
+    #             'publish_tf': False,
+    #         }],
+    # )
+
+    # ros2_laser_scan_matcher needs /scan; start after bridge and robot are up
+    # delayed_scan_matcher = TimerAction(period=10.0, actions=[laser_scan_matcher_odometry_node])
+
+    # Kinematic-ICP LiDAR odometry (2D LaserScan, wheel odom constraint via TF)
+    kinematic_icp_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(get_package_share_directory('kinematic_icp'), 'launch', 'online_node.launch.py'),
+        ]),
+        launch_arguments={
+            'lidar_topic': '/scan',
+            'use_2d_lidar': 'true',
+            'base_frame': 'base_link',
+            'lidar_odom_frame': 'odom',
+            'wheel_odom_frame': 'odom_wheel',
+            'publish_odom_tf': 'true',
+            'invert_odom_tf': 'true',
+            'tf_timeout': '0.5',
+            'visualize': 'false',
+            'use_sim_time': use_sim_time,
+        }.items(),
     )
-
-    # RF2O needs /scan; start after bridge and robot are up
-    delayed_scan_matcher = TimerAction(period=10.0, actions=[laser_scan_matcher_odometry_node])
+    delayed_kinematic_icp = TimerAction(period=10.0, actions=[kinematic_icp_launch])
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -203,9 +223,8 @@ def generate_launch_description():
         bridge,
         laser_to_pointcloud_node,
         delayed_controller_spawner,
-        delayed_ekf,
+        #delayed_ekf,
         delayed_kiss_icp,
+        delayed_kinematic_icp,
         rviz2_node,
-        delayed_rf2o,
-        delayed_scan_matcher,
     ])

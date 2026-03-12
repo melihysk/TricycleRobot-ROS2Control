@@ -21,10 +21,10 @@ offset_tricycle_controller:
     wheel_radius: 0.115
     lateral_offset: 0.255
 
-    odom_frame_id: "odom"
+    odom_frame_id: "odom_wheel"
     base_frame_id: "base_link"
     open_loop: false
-    enable_odom_tf: false
+    enable_odom_tf: true
     odom_only_twist: false
     pose_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
     twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]

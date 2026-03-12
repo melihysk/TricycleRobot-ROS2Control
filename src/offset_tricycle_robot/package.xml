@@ -23,8 +23,9 @@
   <depend>sensor_msgs</depend>
   <depend>nav_msgs</depend>
   <exec_depend>kiss_icp</exec_depend>
-  <depend>rf2o_laser_odometry</depend>
-  <depend>ros2_laser_scan_matcher</depend>
+  <exec_depend>kinematic_icp</exec_depend>
+  <!-- <depend>rf2o_laser_odometry</depend> -->
+  <!-- <depend>ros2_laser_scan_matcher</depend> -->
 
   <export>
     <build_type>ament_cmake</build_type>

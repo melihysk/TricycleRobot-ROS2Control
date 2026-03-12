@@ -1,93 +1,93 @@
-### EKF configuration: wheel odom + KISS-ICP LiDAR odom + IMU ###
-# Subscribes to:
-#   /offset_tricycle_controller/odom  (wheel odometry)
-#   /kiss/odometry                    (KISS-ICP LiDAR odometry, optional)
-#   /imu/data                         (IMU)
-# Publishes:
-#   /odometry/filtered                (fused odometry)
-#   /tf  (odom -> base_link)
+# ### EKF configuration: wheel odom + KISS-ICP LiDAR odom + IMU ###
+# # Subscribes to:
+# #   /offset_tricycle_controller/odom  (wheel odometry)
+# #   /kiss/odometry                    (KISS-ICP LiDAR odometry, optional)
+# #   /imu/data                         (IMU)
+# # Publishes:
+# #   /odometry/filtered                (fused odometry)
+# #   /tf  (odom -> base_link)
 
-ekf_filter_node:
-  ros__parameters:
-    use_sim_time: true
+# ekf_filter_node:
+#   ros__parameters:
+#     use_sim_time: true
 
-    # Output frame configuration
-    odom_frame: odom
-    base_link_frame: base_link
-    world_frame: odom      # Use 'odom' for local odometry fusion
-    map_frame: map
+#     # Output frame configuration
+#     odom_frame: odom
+#     base_link_frame: base_link
+#     world_frame: odom      # Use 'odom' for local odometry fusion
+#     map_frame: map
 
-    # Publish the odom->base_link TF from EKF (not from the controller)
-    publish_tf: true
+#     # Publish the odom->base_link TF from EKF (not from the controller)
+#     publish_tf: false
 
-    # Update rate matches the controller rate
-    frequency: 50.0
+#     # Update rate matches the controller rate
+#     frequency: 50.0
 
-    # ── Wheel Odometry ────────────────────────────────────────────────
-    odom0: /offset_tricycle_controller/odom
+#     # ── Wheel Odometry ────────────────────────────────────────────────
+#     odom0: /offset_tricycle_controller/odom
 
-    # [x,   y,   z,
-    #  roll, pitch, yaw,
-    #  vx,  vy,  vz,
-    #  vroll, vpitch, vyaw,
-    #  ax,  ay,  az]
-    #
-    # From wheel odom we fuse only linear velocity (vx).
-    # All rotation info comes from IMU to avoid double-counting.
-    odom0_config: [false, false, false,
-                   false, false, false,
-                   true,  false, false,
-                   false, false, false,
-                   false, false, false]
+#     # [x,   y,   z,
+#     #  roll, pitch, yaw,
+#     #  vx,  vy,  vz,
+#     #  vroll, vpitch, vyaw,
+#     #  ax,  ay,  az]
+#     #
+#     # From wheel odom we fuse only linear velocity (vx).
+#     # All rotation info comes from IMU to avoid double-counting.
+#     odom0_config: [false, false, false,
+#                    false, false, false,
+#                    true,  false, false,
+#                    false, false, false,
+#                    false, false, false]
 
-    odom0_differential: false
-    odom0_relative: false
-    odom0_queue_size: 10
+#     odom0_differential: false
+#     odom0_relative: false
+#     odom0_queue_size: 10
 
-    # # ── KISS-ICP LiDAR Odometry (optional; improves position, reduces drift) ─
-    # # Requires kiss_icp node publishing on /kiss/odometry (2D scan -> PointCloud2 ile).
-    # # If kiss_icp is not running, EKF still works with odom0 + imu0.
-    # odom1: /kiss/odometry
-    # odom1_config: [false,  false,  false,
-    #                false, false, false,
-    #                true,  true,  false,
-    #                false, false, false,
-    #                false, false, false]
-    # odom1_differential: false
-    # odom1_relative: false
-    # odom1_queue_size: 10
+#     # # ── KISS-ICP LiDAR Odometry (optional; improves position, reduces drift) ─
+#     # # Requires kiss_icp node publishing on /kiss/odometry (2D scan -> PointCloud2 ile).
+#     # # If kiss_icp is not running, EKF still works with odom0 + imu0.
+#     # odom1: /kiss/odometry
+#     # odom1_config: [false,  false,  false,
+#     #                false, false, false,
+#     #                true,  true,  false,
+#     #                false, false, false,
+#     #                false, false, false]
+#     # odom1_differential: false
+#     # odom1_relative: false
+#     # odom1_queue_size: 10
 
-    # ── IMU ───────────────────────────────────────────────────────────
-    imu0: /imu/data
+#     # ── IMU ───────────────────────────────────────────────────────────
+#     imu0: /imu/data
 
-    # From IMU we trust: yaw orientation and vyaw angular velocity.
-    # imu0_differential: true ensures the EKF uses relative yaw changes,
-    # not absolute orientation (which can conflict with odom frame).
-    imu0_config: [false, false, false,
-                  false, false, true,
-                  false, false, false,
-                  false, false, true,
-                  false, false, false]
+#     # From IMU we trust: yaw orientation and vyaw angular velocity.
+#     # imu0_differential: true ensures the EKF uses relative yaw changes,
+#     # not absolute orientation (which can conflict with odom frame).
+#     imu0_config: [false, false, false,
+#                   false, false, true,
+#                   false, false, false,
+#                   false, false, true,
+#                   false, false, false]
 
-    imu0_differential: false
-    imu0_relative: true
-    imu0_queue_size: 10
-    imu0_remove_gravitational_acceleration: true
+#     imu0_differential: false
+#     imu0_relative: true
+#     imu0_queue_size: 10
+#     imu0_remove_gravitational_acceleration: true
 
-    # Process noise covariance (diagonal)
-    # Tune these based on your robot's behavior
-    process_noise_covariance: [0.05,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
-                               0.0,   0.05,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
-                               0.0,   0.0,   0.06,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
-                               0.0,   0.0,   0.0,   0.03,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
-                               0.0,   0.0,   0.0,   0.0,   0.03,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
-                               0.0,   0.0,   0.0,   0.0,   0.0,   0.06,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
-                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.025, 0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
-                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.025, 0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
-                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.04,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
-                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.01,  0.0,   0.0,   0.0,   0.0,   0.0,
-                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.01,  0.0,   0.0,   0.0,   0.0,
-                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.02,  0.0,   0.0,   0.0,
-                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.01,  0.0,   0.0,
-                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.01,  0.0,
-                               0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.015]
+#     # Process noise covariance (diagonal)
+#     # Tune these based on your robot's behavior
+#     process_noise_covariance: [0.05,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+#                                0.0,   0.05,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+#                                0.0,   0.0,   0.06,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+#                                0.0,   0.0,   0.0,   0.03,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+#                                0.0,   0.0,   0.0,   0.0,   0.03,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+#                                0.0,   0.0,   0.0,   0.0,   0.0,   0.06,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+#                                0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.025, 0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+#                                0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.025, 0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+#                                0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.04,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
+#                                0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.01,  0.0,   0.0,   0.0,   0.0,   0.0,
+#                                0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.01,  0.0,   0.0,   0.0,   0.0,
+#                                0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.02,  0.0,   0.0,   0.0,
+#                                0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.01,  0.0,   0.0,
+#                                0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.01,  0.0,
+#                                0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.015]
