@@ -151,7 +151,7 @@ Visualization Manager:
           Value: false
         Value: true
       Enabled: false
-      Keep: 500
+      Keep: 3000
       Name: EKF Odometry
       Position Tolerance: 0.10000000149011612
       Shape:
@@ -190,7 +190,7 @@ Visualization Manager:
           Value: false
         Value: false
       Enabled: false
-      Keep: 500
+      Keep: 3000
       Name: Wheel Odometry
       Position Tolerance: 0.10000000149011612
       Shape:
@@ -229,7 +229,7 @@ Visualization Manager:
           Value: false
         Value: false
       Enabled: true
-      Keep: 1500
+      Keep: 3000
       Name: Gazebo Ground Truth
       Position Tolerance: 0.10000000149011612
       Shape:
@@ -268,7 +268,7 @@ Visualization Manager:
           Value: false
         Value: false
       Enabled: false
-      Keep: 1500
+      Keep: 3000
       Name: RF2O Laser Odometry
       Position Tolerance: 0.10000000149011612
       Shape:
@@ -307,7 +307,7 @@ Visualization Manager:
           Value: false
         Value: false
       Enabled: false
-      Keep: 1500
+      Keep: 3000
       Name: Laser Scan Matcher
       Position Tolerance: 0.10000000149011612
       Shape:
@@ -346,7 +346,7 @@ Visualization Manager:
           Value: false
         Value: false
       Enabled: true
-      Keep: 1500
+      Keep: 3000
       Name: Kiss-icp
       Position Tolerance: 0.10000000149011612
       Shape:
@@ -385,7 +385,7 @@ Visualization Manager:
           Value: false
         Value: false
       Enabled: true
-      Keep: 1500
+      Keep: 3000
       Name: Kinematic-ICP
       Position Tolerance: 0.10000000149011612
       Shape:

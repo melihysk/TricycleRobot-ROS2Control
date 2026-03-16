@@ -13,7 +13,11 @@ endif()
 find_package(ament_cmake REQUIRED)
 
 install(
-  PROGRAMS scripts/joystick_teleop.py scripts/laser_scan_to_pointcloud.py scripts/compare_odometry.py
+  PROGRAMS
+    scripts/joystick_teleop.py
+    scripts/laser_scan_to_pointcloud.py
+    scripts/compare_odometry.py
+    scripts/noise_injector.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
