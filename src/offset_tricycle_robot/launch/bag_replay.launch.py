@@ -5,13 +5,34 @@ Starts everything needed to replay a recorded bag and test odometry
 algorithms with configurable sensor noise — no Gazebo, no controller
 manager, no ROS-Gazebo bridge required.
 
+#Record command:
+ros2 bag record /clock /tf /tf_static /joint_states \
+  /imu/data /scan \
+  /offset_tricycle_controller/odom \
+  /offset_tricycle_controller/cmd_vel \
+  /model/forklift/odometry \
+  -o ~/Desktop/ros_bag_record/warehouse_clean_sensor_data
+
 Usage:
   # Terminal 1: start nodes
-  ros2 launch offset_tricycle_robot bag_replay.launch.py \\
-      scan_stddev:=0.03 imu_gyro_stddev:=0.001 imu_accel_stddev:=0.02
+  ros2 launch offset_tricycle_robot bag_replay.launch.py \
+  scan_stddev:=0.12 \
+  imu_gyro_stddev:=0.015 imu_accel_stddev:=0.3 \
+  odom_vx_stddev:=0.09 odom_vyaw_stddev:=0.09
+
+  ros2 launch offset_tricycle_robot bag_replay.launch.py \
+  odom_vx_stddev:=0.2 odom_vyaw_stddev:=0.2
+
+  ros2 launch offset_tricycle_robot bag_replay.launch.py \
+  scan_stddev:=0.12 \
+  odom_vx_stddev:=0.09 odom_vyaw_stddev:=0.09
 
   # Terminal 2: play the bag (clock driven by bag)
-  ros2 bag play ~/Desktop/ros_bag_record/warehouse_clean_sensor_data --clock
+  ros2 bag play ~/Desktop/ros_bag_record/warehouse_clean_sensor_data --clock \
+    --topics /clock /joint_states /imu/data /scan \
+             /offset_tricycle_controller/odom \
+             /offset_tricycle_controller/cmd_vel \
+             /model/forklift/odometry
 
   # Terminal 3: record odometry comparison (optional)
   ros2 run offset_tricycle_robot compare_odometry.py record \\
@@ -21,6 +42,8 @@ Launch arguments:
   imu_gyro_stddev   (default 0.0)  IMU angular velocity noise [rad/s]
   imu_accel_stddev  (default 0.0)  IMU linear acceleration noise [m/s²]
   scan_stddev       (default 0.0)  LiDAR range noise per beam [m]
+  odom_vx_stddev    (default 0.0)  Wheel odom forward velocity noise [m/s]  (encoder/slip)
+  odom_vyaw_stddev  (default 0.0)  Wheel odom yaw rate noise [rad/s]        (steering encoder)
   rvizconfig        (default gz_sim.rviz from package)
 """
 
@@ -65,10 +88,12 @@ def generate_launch_description():
         name='noise_injector',
         output='screen',
         parameters=[{
-            'use_sim_time': use_sim_time,
+            'use_sim_time':            use_sim_time,
             'imu_gyro_noise_stddev':   LaunchConfiguration('imu_gyro_stddev'),
             'imu_accel_noise_stddev':  LaunchConfiguration('imu_accel_stddev'),
             'scan_range_noise_stddev': LaunchConfiguration('scan_stddev'),
+            'odom_vx_stddev':          LaunchConfiguration('odom_vx_stddev'),
+            'odom_vyaw_stddev':        LaunchConfiguration('odom_vyaw_stddev'),
         }],
     )
 
@@ -120,7 +145,7 @@ def generate_launch_description():
             'use_2d_lidar':     'true',
             'base_frame':       'base_link',
             'lidar_odom_frame': 'odom',
-            'wheel_odom_frame': 'odom_wheel',
+            'wheel_odom_frame': 'odom_wheel_noisy',
             'publish_odom_tf':  'true',
             'invert_odom_tf':   'true',
             'tf_timeout':       '0.5',
@@ -156,6 +181,14 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'scan_stddev', default_value='0.0',
             description='LiDAR range noise stddev per beam [m]',
+        ),
+        DeclareLaunchArgument(
+            'odom_vx_stddev', default_value='0.0',
+            description='Wheel odom forward velocity noise stddev [m/s] (models traction encoder error / slip)',
+        ),
+        DeclareLaunchArgument(
+            'odom_vyaw_stddev', default_value='0.0',
+            description='Wheel odom yaw rate noise stddev [rad/s] (models steering encoder error)',
         ),
         DeclareLaunchArgument(
             'rvizconfig', default_value=rviz_config_path,

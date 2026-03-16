@@ -35,10 +35,11 @@ from nav_msgs.msg import Odometry
 
 # Topic -> short name for filenames; reference is ground truth
 ODOM_TOPICS = {
-    "/model/forklift/odometry":         "ground_truth",
-    "/kiss/odometry":                   "kiss_icp",
-    "/kinematic_icp/lidar_odometry":    "kinematic_icp",
-    "/offset_tricycle_controller/odom": "wheel_odom",
+    "/model/forklift/odometry":               "ground_truth",
+    "/kiss/odometry":                         "kiss_icp",
+    "/kinematic_icp/lidar_odometry":          "kinematic_icp",
+    "/offset_tricycle_controller/odom":       "wheel_odom",
+    "/offset_tricycle_controller/odom/noisy": "wheel_odom_noisy",
 }
 REFERENCE_TOPIC = "/model/forklift/odometry"
 ESTIMATE_TOPICS = [t for t in ODOM_TOPICS if t != REFERENCE_TOPIC]
